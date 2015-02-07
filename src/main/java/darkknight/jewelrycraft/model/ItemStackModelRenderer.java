@@ -25,13 +25,15 @@ public class ItemStackModelRenderer extends ModelRenderer
 
     private ResourceLocation resetResourceLocation;
 
+    private Minecraft mc;
+
     private EntityItem entityItem;
 
     public ItemStackModelRenderer(ModelBase modelBase, ResourceLocation resetResourceLocation)
     {
         super(modelBase);
         renderItem = (RenderItem) RenderManager.instance.entityRenderMap.get(EntityItem.class);
-        textureManager = Minecraft.getMinecraft().getTextureManager();
+        textureManager = (mc = Minecraft.getMinecraft()).getTextureManager();
         this.resetResourceLocation = resetResourceLocation;
     }
 
@@ -54,7 +56,7 @@ public class ItemStackModelRenderer extends ModelRenderer
         {
             if (textureManager == null)
             {
-                textureManager = Minecraft.getMinecraft().getTextureManager();
+                textureManager = mc.getTextureManager();
             }
             GL11.glPushMatrix();
             GL11.glTranslatef(offsetX, offsetY, offsetZ);
@@ -62,7 +64,10 @@ public class ItemStackModelRenderer extends ModelRenderer
             GL11.glRotatef(rotateAngleZ * (180 / (float) Math.PI), 0, 0, 1);
             GL11.glRotatef(rotateAngleY * (180 / (float) Math.PI), 0, 1, 0);
             GL11.glRotatef(rotateAngleX * (180 / (float) Math.PI), 1, 0, 0);
+            boolean fancyGraphics = mc.gameSettings.fancyGraphics;
+            mc.gameSettings.fancyGraphics = true;
             renderItem.doRender(entityItem, 0, 0, 0, 0, 0);
+            mc.gameSettings.fancyGraphics = fancyGraphics;
             GL11.glPopMatrix();
             textureManager.bindTexture(resetResourceLocation);
         }
